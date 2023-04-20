@@ -4,9 +4,12 @@ import csv
 import os
 
 def add_task(task):
-    with open("tasks.csv", "a", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow([task])
+    if task.strip():  # Check if the task is not an empty string
+        with open("tasks.csv", "a", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow([task])
+    else:
+        print("Task cannot be an empty string.")
 
 def display_tasks():
     if os.path.exists("tasks.csv"):
