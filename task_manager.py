@@ -5,6 +5,9 @@ import os
 from datetime import datetime
 import textwrap
 
+def get_date_obj(date_str):
+    return datetime.strptime(date_str, "%Y-%m-%d").date()
+
 def add_task(task_description):
     if task_description.strip():
         while True:
@@ -34,20 +37,25 @@ def add_task(task_description):
 def display_tasks():
     if os.path.exists("tasks.csv"):
         with open("tasks.csv", "r") as file:
-            tasks = list(csv.reader(file))
+            tasks = [row for row in csv.reader(file) if row[3] == "0"]
+            tasks.sort(key=lambda task: (int(task[2]), get_date_obj(task[1]), int(task[4])))
+
             if len(tasks) == 0:
                 print("No tasks yet. Start adding tasks!")
                 return
+            
             print("\nTo-do List:")
             print("No. | Description                                          | Due Date  | Priority")
             print("----+------------------------------------------------------+-----------+----------")
-            for index, task in enumerate(tasks, start=1):
+            for task in tasks:
+                index = int(task[4])
                 wrapped_description = textwrap.fill(task[0], width=50)
                 wrapped_lines = wrapped_description.splitlines()
-                print(f"{index: <4}| {wrapped_lines[0]: <53}| {task[1]: <10}| {task[2]}")
+                print(f"{index: <4}| {wrapped_lines[0]: <53}| {task[1]: <10}| {task[2]: <9}")
                 for line in wrapped_lines[1:]:
-                    print(f"    | {line: <53}|           |")
+                    print(f"    | {line: <53}|           |         ")
             print("----+------------------------------------------------------+-----------+----------")
+
     else:
         print("\nNo tasks yet. Start adding tasks!")
 
@@ -70,3 +78,15 @@ def remove_task(task_number=None):
             writer.writerows(tasks)
     else:
         print("Invalid task number. Please try again.")
+
+def mark_task_done(task_number):
+    if os.path.exists("tasks.csv"):
+        with open("tasks.csv", "r") as file:
+            tasks = list(csv.reader(file))
+
+        if 0 < task_number <= len(tasks):
+            tasks[task_number - 1][3] = "1"
+
+            with open("tasks.csv", "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerows(tasks)
