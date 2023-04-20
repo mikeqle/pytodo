@@ -1,13 +1,14 @@
 # main.py
-
+import os
 from task_manager import add_task, display_tasks, remove_task
 
 def main():
     while True:
+        os.system("clear")
         print("\nTo-do List Manager")
         print("-------------------")
         display_tasks()
-        user_input = input("Enter a new task, 'r' to remove a task, or 'q' to quit: ").strip()
+        user_input = input("Enter anew task, 'r' to remove a task, or 'q' to quit: ").strip()
 
         if user_input.lower() == 'q':
             break
