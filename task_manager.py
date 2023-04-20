@@ -9,7 +9,7 @@ def add_task(task_description):
         while True:
             due_date = input("Enter the due date (YYYY-MM-DD): ").strip()
             try:
-                due_date_obj = datetime.strptime(due_date, "%Y-%m-%d")
+                due_date_obj = datetime.strptime(due_date, "%Y-%m-%d").date()
                 if due_date_obj >= datetime.now().date():
                     break
                 else:
