@@ -1,9 +1,10 @@
 # task_manager.py
-
 import csv
 import os
 from datetime import datetime
 import textwrap
+
+task_file_path = "/Users/mike/git-projects/2023/to-do-list/tasks.csv"
 
 def get_date_obj(date_str):
     return datetime.strptime(date_str, "%Y-%m-%d").date()
@@ -29,15 +30,15 @@ def add_task(task_description):
                 print("Invalid priority. Please enter 0, 1, 2, or 3.")
         
         task_number = get_last_task_number()
-        with open("tasks.csv", "a", newline="") as file:
+        with open(task_file_path, "a", newline="") as file:
             writer = csv.writer(file)
             writer.writerow([task_description, due_date, priority, 0, task_number])
     else:
         print("Task description cannot be an empty string.")
 
 def display_tasks():
-    if os.path.exists("tasks.csv"):
-        with open("tasks.csv", "r") as file:
+    if os.path.exists(task_file_path):
+        with open(task_file_path, "r") as file:
             tasks = [row for row in csv.reader(file) if row[3] == "0"]
             tasks.sort(key=lambda task: (int(task[2]), get_date_obj(task[1]), int(task[4])))
 
@@ -68,8 +69,8 @@ def remove_task(task_number=None):
             print("Invalid input. Please enter a valid task number.")
             return
 
-    if os.path.exists("tasks.csv"):
-        with open("tasks.csv", "r") as file:
+    if os.path.exists(task_file_path):
+        with open(task_file_path, "r") as file:
             tasks = list(csv.reader(file))
 
         found_task = False
@@ -80,7 +81,7 @@ def remove_task(task_number=None):
                 break
 
         if found_task:
-            with open("tasks.csv", "w", newline="") as file:
+            with open(task_file_path, "w", newline="") as file:
                 writer = csv.writer(file)
                 writer.writerows(tasks)
             print(f"Task {task_number} has been removed.")
@@ -91,8 +92,8 @@ def remove_task(task_number=None):
 
 
 def mark_task_done(task_number):
-    if os.path.exists("tasks.csv"):
-        with open("tasks.csv", "r") as file:
+    if os.path.exists(task_file_path):
+        with open(task_file_path, "r") as file:
             tasks = list(csv.reader(file))
 
         found_task = False
@@ -103,7 +104,7 @@ def mark_task_done(task_number):
                 break
 
         if found_task:
-            with open("tasks.csv", "w", newline="") as file:
+            with open(task_file_path, "w", newline="") as file:
                 writer = csv.writer(file)
                 writer.writerows(tasks)
             print(f"Task {task_number} marked as done.")
@@ -114,8 +115,8 @@ def mark_task_done(task_number):
 
 
 def get_last_task_number():
-    if os.path.exists("tasks.csv"):
-        with open("tasks.csv", "r") as file:
+    if os.path.exists(task_file_path):
+        with open(task_file_path, "r") as file:
             tasks = list(csv.reader(file))
             # return max value of the fifth column (task number)
             return max(int(task[4]) for task in tasks) + 1
