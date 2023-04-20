@@ -1,7 +1,7 @@
 # main.py
 
 import os
-from task_manager import add_task, display_tasks, remove_task
+from task_manager import add_task, display_tasks, remove_task, mark_task_done
 
 def clear_screen():
     if os.name == "nt":  # Windows
@@ -27,13 +27,20 @@ def main():
 
             if user_input.lower() == 'q':
                 break
-            elif user_input.lower() == 'r':
+            elif user_input.lower().startswith('r-'):
                 try:
-                    task_number = int(input("Enter the task number to remove: "))
+                    task_number = int(user_input[2:].strip())
                     remove_task(task_number)
                     last_message = "Task removed successfully."
                 except ValueError:
-                    last_message = "Invalid input. Please enter a valid task number."
+                    last_message = "Invalid input. Please enter 'r' followed by a valid task number."
+            elif user_input.lower().startswith('d-'):
+                try:
+                    task_number = int(user_input[2:].strip())
+                    mark_task_done(task_number)
+                    last_message = "Task marked as done."
+                except ValueError:
+                    last_message = "Invalid input. Please enter 'd' followed by a valid task number."
             else:
                 add_task(user_input)
                 last_message = "Task added successfully."

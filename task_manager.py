@@ -27,10 +27,11 @@ def add_task(task_description):
                 break
             else:
                 print("Invalid priority. Please enter 0, 1, 2, or 3.")
-
+        
+        task_number = get_last_task_number()
         with open("tasks.csv", "a", newline="") as file:
             writer = csv.writer(file)
-            writer.writerow([task_description, due_date, f"P{priority}"])
+            writer.writerow([task_description, due_date, priority, 0, task_number])
     else:
         print("Task description cannot be an empty string.")
 
@@ -67,26 +68,56 @@ def remove_task(task_number=None):
             print("Invalid input. Please enter a valid task number.")
             return
 
-    with open("tasks.csv", "r") as file:
-        tasks = list(csv.reader(file))
+    if os.path.exists("tasks.csv"):
+        with open("tasks.csv", "r") as file:
+            tasks = list(csv.reader(file))
 
-    if 0 < task_number <= len(tasks):
-        del tasks[task_number - 1]
+        found_task = False
+        for task in tasks:
+            if task[4] == str(task_number):
+                tasks.remove(task)
+                found_task = True
+                break
 
-        with open("tasks.csv", "w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerows(tasks)
+        if found_task:
+            with open("tasks.csv", "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerows(tasks)
+            print(f"Task {task_number} has been removed.")
+        else:
+            print(f"No task with task number {task_number} found.")
     else:
-        print("Invalid task number. Please try again.")
+        print("No tasks file found.")
+
 
 def mark_task_done(task_number):
     if os.path.exists("tasks.csv"):
         with open("tasks.csv", "r") as file:
             tasks = list(csv.reader(file))
 
-        if 0 < task_number <= len(tasks):
-            tasks[task_number - 1][3] = "1"
+        found_task = False
+        for task in tasks:
+            if task[4] == str(task_number):
+                task[3] = "1"
+                found_task = True
+                break
 
+        if found_task:
             with open("tasks.csv", "w", newline="") as file:
                 writer = csv.writer(file)
                 writer.writerows(tasks)
+            print(f"Task {task_number} marked as done.")
+        else:
+            print(f"No task with task number {task_number} found.")
+    else:
+        print("No tasks file found.")
+
+
+def get_last_task_number():
+    if os.path.exists("tasks.csv"):
+        with open("tasks.csv", "r") as file:
+            tasks = list(csv.reader(file))
+            # return max value of the fifth column (task number)
+            return max(int(task[4]) for task in tasks) + 1
+    else:
+        return 0
