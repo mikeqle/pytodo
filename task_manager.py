@@ -1,3 +1,5 @@
+# task_manager.py
+
 import csv
 import os
 
@@ -15,3 +17,16 @@ def display_tasks():
                 print(f"{index}. {task[0]}")
     else:
         print("\nNo tasks yet. Start adding tasks!")
+
+def remove_task(task_number):
+    with open("tasks.csv", "r") as file:
+        tasks = list(csv.reader(file))
+        
+    if 0 < task_number <= len(tasks):
+        del tasks[task_number - 1]
+
+        with open("tasks.csv", "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerows(tasks)
+    else:
+        print("Invalid task number. Please try again.")

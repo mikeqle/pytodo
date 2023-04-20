@@ -1,18 +1,24 @@
-import csv
-import os
-from task_manager import add_task, display_tasks
+# main.py
+
+from task_manager import add_task, display_tasks, remove_task
 
 def main():
     while True:
         print("\nTo-do List Manager")
         print("-------------------")
         display_tasks()
-        new_task = input("Enter a new task or type 'q' to quit: ").strip()
-        
-        if new_task.lower() == 'q':
+        user_input = input("Enter a new task, 'r' to remove a task, or 'q' to quit: ").strip()
+
+        if user_input.lower() == 'q':
             break
+        elif user_input.lower() == 'r':
+            try:
+                task_number = int(input("Enter the task number to remove: "))
+                remove_task(task_number)
+            except ValueError:
+                print("Invalid input. Please enter a valid task number.")
         else:
-            add_task(new_task)
+            add_task(user_input)
 
 if __name__ == "__main__":
     main()
