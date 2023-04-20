@@ -3,6 +3,7 @@
 import csv
 import os
 from datetime import datetime
+import textwrap
 
 def add_task(task_description):
     if task_description.strip():
@@ -34,11 +35,19 @@ def display_tasks():
     if os.path.exists("tasks.csv"):
         with open("tasks.csv", "r") as file:
             tasks = list(csv.reader(file))
+            if len(tasks) == 0:
+                print("No tasks yet. Start adding tasks!")
+                return
             print("\nTo-do List:")
-            print("No. | Description            | Due Date  | Priority")
-            print("----+------------------------+-----------+----------")
+            print("No. | Description                                          | Due Date  | Priority")
+            print("----+------------------------------------------------------+-----------+----------")
             for index, task in enumerate(tasks, start=1):
-                print(f"{index: <4}| {task[0]: <22}| {task[1]: <10}| {task[2]}")
+                wrapped_description = textwrap.fill(task[0], width=50)
+                wrapped_lines = wrapped_description.splitlines()
+                print(f"{index: <4}| {wrapped_lines[0]: <53}| {task[1]: <10}| {task[2]}")
+                for line in wrapped_lines[1:]:
+                    print(f"    | {line: <53}|           |")
+            print("----+------------------------------------------------------+-----------+----------")
     else:
         print("\nNo tasks yet. Start adding tasks!")
 
