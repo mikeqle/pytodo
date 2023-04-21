@@ -1,7 +1,7 @@
 # task_manager.py
 import csv
 import os
-from datetime import datetime
+from datetime import datetime, date
 import textwrap
 
 task_file_path = "/Users/mike/git-projects/2023/to-do-list/tasks.csv"
@@ -14,11 +14,15 @@ def add_task(task_description):
         while True:
             due_date = input("Enter the due date (YYYY-MM-DD): ").strip()
             try:
-                due_date_obj = datetime.strptime(due_date, "%Y-%m-%d").date()
-                if due_date_obj >= datetime.now().date():
-                    break
+                if due_date:
+                    due_date_obj = datetime.strptime(due_date, "%Y-%m-%d").date()
+                    if due_date_obj >= datetime.now().date():
+                        break
+                    else:
+                        print("Please enter today's date or a future date.")
                 else:
-                    print("Please enter today's date or a future date.")
+                    due_date = datetime.now().date().strftime("%Y-%m-%d")
+                    break
             except ValueError:
                 print("Invalid date format. Please use 'YYYY-MM-DD'.")
 
