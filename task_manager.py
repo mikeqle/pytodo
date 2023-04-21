@@ -46,7 +46,7 @@ def display_tasks():
                 print("No tasks yet. Start adding tasks!")
                 return
             
-            print("\nTo-do List:")
+            
             print("No. | Description                                          | Due Date  | Priority")
             print("----+------------------------------------------------------+-----------+----------")
             for task in tasks:
@@ -113,6 +113,58 @@ def mark_task_done(task_number):
     else:
         print("No tasks file found.")
 
+def update_task(task_number):
+    if os.path.exists(task_file_path):
+        with open(task_file_path, "r") as file:
+            tasks = list(csv.reader(file))
+
+        task_index = None
+        for index, task in enumerate(tasks):
+            if int(task[4]) == task_number:
+                task_index = index
+                break
+
+        if task_index is not None:
+            new_description = input("Enter new task description: ").strip()
+            if(new_description == ""):
+                pass
+            else:
+                tasks[task_index][0] = new_description
+            
+            while True:
+                new_due_date = input("Enter the due date (YYYY-MM-DD): ").strip()
+                if (new_due_date == ""):
+                    break
+                try:
+                    due_date_obj = datetime.strptime(new_due_date, "%Y-%m-%d").date()
+                    if due_date_obj >= datetime.now().date():
+                        tasks[task_index][1] = new_due_date
+                        break
+                    else:
+                        print("Please enter today's date or a future date.")
+                except ValueError:
+                    print("Invalid date format. Please use 'YYYY-MM-DD'.")
+            
+
+
+            while True:
+                new_priority = input("Enter the priority (0, 1, 2, 3): ").strip()
+                if new_priority == "":
+                    break
+                elif new_priority in ('0', '1', '2', '3'):
+                    tasks[task_index][2] = new_priority
+                    break
+                else:
+                    print("Invalid priority. Please enter 0, 1, 2, or 3.")
+
+
+            with open(task_file_path, "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerows(tasks)
+        else:
+            print("Task number not found.")
+    else:
+        print("File tasks.csv not found.")
 
 def get_last_task_number():
     if os.path.exists(task_file_path):
